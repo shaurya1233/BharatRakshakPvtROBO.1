@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shaurya's Advanced AI Robot Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    <style>
+        :root {
+            --primary-neon: #00f7ff;
+            --secondary-neon: #ff00e6;
+            --accent-gold: #ffd700;
+            --accent-purple: #a020f0;
+            --bg-deep-space: #000510;
+            --bg-space-light: #0a0f1a;
+            --bg-panel: rgba(10, 20, 40, 0.85);
+            --bg-panel-light: rgba(240, 245, 255, 0.9);
+            --text-primary: #ffffff;
+            --text-secondary: #b8c5d6;
+            --text-accent: #00f7ff;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(20, 30, 50, 0.6);
+            --robot-metal-dark: #1a1a2e;
+            --robot-metal-light: #2d2d44;
+            --robot-glow: rgba(0, 247, 255, 0.8);
+            --shadow-neon: 0 0 30px var(--primary-neon);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --font-main: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .light-mode {
+            --bg-deep-space: #f5f8ff;
+            --bg-space-light: #ffffff;
+            --bg-panel: rgba(255, 255, 255, 0.9);
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a5568;
+            --text-accent: #0066cc;
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --shadow-neon: 0 0 20px rgba(0, 102, 204, 0.3);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, var(--bg-deep-space) 0%, var(--bg-space-light) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(0, 247, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 0, 230, 0.03) 0%, transparent 50%),
+                linear-gradient(rgba(0, 247, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 247, 255, 0.01) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-section {
+            text-align: center;
+            padding: 2rem 0;
+            width: 100%;
+        }
+
+        .main-title {
+            font-family: var(--font-main);
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon), var(--accent-gold));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease-in-out infinite;
+            text-shadow: var(--shadow-neon);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            color: var(--text-accent);
+            font-weight: 500;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            text-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-neon);
+            box-shadow: 0 0 10px var(--primary-neon);
+            animation: pulse 2s infinite;
+        }
+
+        .robot-stage {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 500px;
+            margin: 2rem 0;
+            perspective: 1000px;
+        }
+
+        .robot-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+            filter: drop-shadow(var(--shadow-neon));
+        }
+
+        .robot-base {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 350px;
+        }
+
+        .robot-head {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 140px;
+            background: linear-gradient(145deg, var(--robot-metal-light), var(--robot-metal-dark));
+            border-radius: 50% 50% 40% 40%;
+            border: 2px solid var(--glass-border);
+            box-shadow: 
+                var(--shadow-soft),
+                inset 0 0 20px rgba(255, 255, 255, 0.1),
+                0 0 40px var(--robot-glow);
+            overflow: hidden;
+        }
+
+        .robot-face {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .robot-eyes {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .robot-eye {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--primary-neon), #0066cc);
+            box-shadow: 
+                0 0 20px var(--primary-neon),
+                inset 0 0 10px rgba(255, 255, 255, 0.3);
+            animation: blink 4s infinite;
+            position: relative;
+        }
+
+        .robot-eye::after {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 40%;
+            height: 40%;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            filter: blur(1px);
+        }
+
+        .robot-mouth {
+            width: 80px;
+            height: 15px;
+            background: var(--robot-metal-dark);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .mouth-animation {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-neon), var(--secondary-neon));
+            transform: scaleY(0.2);
+            transform-origin: center;
+            transition: transform 0.1s ease;
+        }
+
+        .robot-body {
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 180px;
+            background: linear-gradient(145deg, var(--robot-metal-light), var(--robot-metal-dark));
+            border-radius: 20px 20px 30px 30px;
+            border: 2px solid var(--glass-border);
+            box-shadow: 
+                var(--shadow-soft),
+                inset 0 0 20px rgba(255, 255, 255, 0.1),
+                0 0 30px var(--robot-glow);
+        }
+
+        .robot-chest {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 80px;
+            background: var(--robot-metal-dark);
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .chest-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 40px;
+            background: radial-gradient(ellipse, var(--primary-neon), transparent 70%);
+            border-radius: 50%;
+            animation: pulse 3s infinite alternate;
+        }
+
+        .robot-arms {
+            position: absolute;
+            top: 140px;
+            width: 100%;
+            height: 60px;
+        }
+
+        .robot-arm {
+            position: absolute;
+            width: 40px;
+            height: 100px;
+            background: linear-gradient(145deg, var(--robot-metal-light), var(--robot-metal-dark));
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .robot-arm.left {
+            left: -20px;
+            transform: rotate(-15deg);
+        }
+
+        .robot-arm.right {
+            right: -20px;
+            transform: rotate(15deg);
+        }
+
+        .energy-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-neon);
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleFloat 3s infinite linear;
+        }
+
+        .interface-panel {
+            width: 100%;
+            max-width: 700px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interface-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-neon), transparent);
+            animation: scanLine 3s infinite;
+        }
+
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        .input-label {
+            display: block;
+            font-family: var(--font-main);
+            font-size: 1.1rem;
+            color: var(--text-accent);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(0, 247, 255, 0.3);
+        }
+
+        .input-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .voice-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 15px;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-family: var(--font-body);
+            transition: var(--transition-smooth);
+            backdrop-filter: blur(10px);
+        }
+
+        .voice-input:focus {
+            outline: none;
+            border-color: var(--primary-neon);
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+            background: rgba(0, 247, 255, 0.05);
+        }
+
+        .voice-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .control-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .control-btn:hover::before {
+            left: 100%;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 10px 25px rgba(0, 247, 255, 0.4),
+                0 0 30px rgba(255, 0, 230, 0.3);
+        }
+
+        .control-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .mic-btn {
+            background: linear-gradient(135deg, #ff00e6, #ff5722);
+        }
+
+        .mic-btn:hover {
+            box-shadow: 
+                0 10px 25px rgba(255, 0, 230, 0.4),
+                0 0 30px rgba(255, 87, 34, 0.3);
+        }
+
+        .settings-btn {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-gold));
+        }
+
+        .response-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            min-height: 150px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .response-panel.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .response-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+        }
+
+        .loading-indicator {
+            display: none;
+            text-align: center;
+            color: var(--text-accent);
+            font-size: 1.2rem;
+            margin: 2rem 0;
+        }
+
+        .loading-indicator i {
+            animation: spin 2s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        .theme-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .theme-label {
+            font-family: var(--font-main);
+            color: var(--text-accent);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 80px;
+            height: 40px;
+            background: var(--robot-metal-dark);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: 2px solid var(--glass-border);
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 28px;
+            height: 28px;
+            background: var(--primary-neon);
+            border-radius: 50%;
+            transition: var(--transition-bounce);
+            box-shadow: 0 0 15px var(--primary-neon);
+        }
+
+        .theme-toggle.active {
+            background: var(--text-secondary);
+        }
+
+        .theme-toggle.active::before {
+            left: 44px;
+            background: var(--secondary-neon);
+            box-shadow: 0 0 15px var(--secondary-neon);
+        }
+
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .settings-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .settings-content {
+            background: var(--bg-panel);
+            border: 2px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.8);
+            transition: var(--transition-bounce);
+        }
+
+        .settings-modal.active .settings-content {
+            transform: scale(1);
+        }
+
+        .settings-title {
+            font-family: var(--font-main);
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .setting-group {
+            margin-bottom: 2rem;
+        }
+
+        .setting-label {
+            display: block;
+            font-family: var(--font-main);
+            color: var(--text-accent);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .setting-control {
+            width: 100%;
+            padding: 1rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            transition: var(--transition-smooth);
+        }
+
+        .setting-control:focus {
+            outline: none;
+            border-color: var(--primary-neon);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.3);
+        }
+
+        .range-slider {
+            -webkit-appearance: none;
+            height: 8px;
+            background: var(--glass-bg);
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--primary-neon), var(--secondary-neon));
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--primary-neon);
+        }
+
+        .footer-info {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateY(0deg); }
+            33% { transform: translateY(-15px) rotateY(5deg); }
+            66% { transform: translateY(-5px) rotateY(-3deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) scale(0);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(80px) scale(1);
+            }
+            90% {
+                opacity: 1;
+                transform: translateY(-80px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0);
+            }
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes talking {
+            0%, 100% { transform: scaleY(0.2); }
+            50% { transform: scaleY(1); }
+        }
+
+        .talking-animation {
+            animation: talking 0.15s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                gap: 2rem;
+            }
+
+            .robot-stage {
+                height: 400px;
+            }
+
+            .robot-base {
+                width: 250px;
+                height: 300px;
+            }
+
+            .interface-panel {
+                padding: 1.5rem;
+            }
+
+            .control-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .status-bar {
+                gap: 1rem;
+            }
+
+            .theme-controls {
+                gap: 0.5rem;
+            }
+
+            .settings-content {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <h1 class="main-title">SHAURYA'S AI ASSISTANT</h1>
+            <p class="subtitle">Advanced Neural Interface • Quantum Processing Core • Voice Synthesis Engine</p>
+            
+            <div class="status-bar">
+                <div class="status-item">
+                    <div class="status-indicator"></div>
+                    <span>AI Core Online</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-indicator"></div>
+                    <span>Voice Synthesis Ready</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-indicator"></div>
+                    <span>Neural Network Active</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="robot-stage">
+            <div class="robot-container" id="robotContainer">
+                <div class="robot-base">
+                    <div class="robot-head">
+                        <div class="robot-face">
+                            <div class="robot-eyes">
+                                <div class="robot-eye"></div>
+                                <div class="robot-eye"></div>
+                            </div>
+                            <div class="robot-mouth">
+                                <div class="mouth-animation" id="mouthAnimation"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="robot-body">
+                        <div class="robot-chest">
+                            <div class="chest-display"></div>
+                        </div>
+                        <div class="robot-arms">
+                            <div class="robot-arm left"></div>
+                            <div class="robot-arm right"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="energy-particles" id="energyParticles"></div>
+            </div>
+        </div>
+
+        <div class="interface-panel">
+            <form id="voiceForm">
+                <div class="input-section">
+                    <label class="input-label" for="voiceInput">
+                        <i class="fas fa-microphone-alt"></i> Voice Command Interface
+                    </label>
+                    <div class="input-container">
+                        <input 
+                            type="text" 
+                            id="voiceInput" 
+                            class="voice-input" 
+                            placeholder="Ask me anything about Shaurya or engage in conversation..."
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
+                <div class="control-buttons">
+                    <button type="submit" class="control-btn">
+                        <i class="fas fa-robot"></i>
+                        <span>Process Query</span>
+                    </button>
+                    
+                    <button type="button" class="control-btn mic-btn" id="introButton">
+                        <i class="fas fa-volume-up"></i>
+                        <span>Voice Intro</span>
+                    </button>
+                    
+                    <button type="button" class="control-btn settings-btn" id="settingsButton">
+                        <i class="fas fa-cogs"></i>
+                        <span>Voice Settings</span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="loading-indicator" id="loadingIndicator">
+                <i class="fas fa-atom"></i>
+                Processing neural pathways...
+            </div>
+
+            <div class="response-panel" id="responsePanel">
+                <div class="response-text" id="responseText"></div>
+            </div>
+
+            <div class="theme-controls">
+                <span class="theme-label">Dark</span>
+                <div class="theme-toggle" id="themeToggle"></div>
+                <span class="theme-label">Light</span>
+            </div>
+        </div>
+
+        <div class="footer-info">
+            <p>© 2024 Shaurya's Advanced AI Laboratory • Neural Interface v3.0 • Quantum Processing Enabled</p>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <h2 class="settings-title">Voice Synthesis Configuration</h2>
+            
+            <div class="setting-group">
+                <label class="setting-label" for="voiceRate">
+                    Speech Rate: <span id="voiceRateValue">1.0</span>
+                </label>
+                <input 
+                    type="range" 
+                    id="voiceRate" 
+                    class="setting-control range-slider" 
+                    min="0.3" 
+                    max="3.0" 
+                    step="0.1" 
+                    value="1.0"
+                >
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label" for="voicePitch">
+                    Voice Pitch: <span id="voicePitchValue">1.0</span>
+                </label>
+                <input 
+                    type="range" 
+                    id="voicePitch" 
+                    class="setting-control range-slider" 
+                    min="0.0" 
+                    max="2.0" 
+                    step="0.1" 
+                    value="1.0"
+                >
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label" for="voiceVolume">
+                    Voice Volume: <span id="voiceVolumeValue">1.0</span>
+                </label>
+                <input 
+                    type="range" 
+                    id="voiceVolume" 
+                    class="setting-control range-slider" 
+                    min="0.0" 
+                    max="1.0" 
+                    step="0.1" 
+                    value="1.0"
+                >
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label" for="voiceSelect">Neural Voice Model:</label>
+                <select id="voiceSelect" class="setting-control"></select>
+            </div>
+
+            <div class="control-buttons">
+                <button type="button" class="control-btn" id="testVoiceButton">
+                    <i class="fas fa-play"></i>
+                    <span>Test Voice</span>
+                </button>
+                
+                <button type="button" class="control-btn" id="closeSettingsButton">
+                    <i class="fas fa-times"></i>
+                    <span>Close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class AdvancedAIAssistant {
+            constructor() {
+                this.initializeElements();
+                this.initializeVoiceSystem();
+                this.initializeKnowledgeBase();
+                this.initializeEventListeners();
+                this.initializeAnimations();
+                this.loadUserPreferences();
+            }
+
+            initializeElements() {
+                this.elements = {
+                    voiceInput: document.getElementById('voiceInput'),
+                    voiceForm: document.getElementById('voiceForm'),
+                    responsePanel: document.getElementById('responsePanel'),
+                    responseText: document.getElementById('responseText'),
+                    loadingIndicator: document.getElementById('loadingIndicator'),
+                    mouthAnimation: document.getElementById('mouthAnimation'),
+                    robotContainer: document.getElementById('robotContainer'),
+                    energyParticles: document.getElementById('energyParticles'),
+                    themeToggle: document.getElementById('themeToggle'),
+                    settingsButton: document.getElementById('settingsButton'),
+                    settingsModal: document.getElementById('settingsModal'),
+                    introButton: document.getElementById('introButton'),
+                    closeSettingsButton: document.getElementById('closeSettingsButton'),
+                    testVoiceButton: document.getElementById('testVoiceButton'),
+                    voiceSelect: document.getElementById('voiceSelect'),
+                    voiceRate: document.getElementById('voiceRate'),
+                    voiceRateValue: document.getElementById('voiceRateValue'),
+                    voicePitch: document.getElementById('voicePitch'),
+                    voicePitchValue: document.getElementById('voicePitchValue'),
+                    voiceVolume: document.getElementById('voiceVolume'),
+                    voiceVolumeValue: document.getElementById('voiceVolumeValue')
+                };
+            }
+
+            initializeVoiceSystem() {
+                this.speechSynth = window.speechSynthesis;
+                this.voices = [];
+                this.currentUtterance = null;
+                
+                this.voiceSettings = {
+                    rate: 1.0,
+                    pitch: 1.0,
+                    volume: 1.0,
+                    voiceURI: ''
+                };
+
+                // Load voices when available
+                this.loadVoices();
+                if (this.speechSynth.onvoiceschanged !== undefined) {
+                    this.speechSynth.onvoiceschanged = () => this.loadVoices();
+                }
+            }
+
+            loadVoices() {
+                this.voices = this.speechSynth.getVoices();
+                this.populateVoiceSelect();
+            }
+
+            populateVoiceSelect() {
+                const voiceSelect = this.elements.voiceSelect;
+                voiceSelect.innerHTML = '';
+
+                // Add default option
+                const defaultOption = document.createElement('option');
+                defaultOption.textContent = 'System Default Voice';
+                defaultOption.value = '';
+                voiceSelect.appendChild(defaultOption);
+
+                // Add available voices
+                this.voices.forEach(voice => {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.value = voice.voiceURI;
+                    if (voice.default) {
+                        option.textContent += ' [Default]';
+                    }
+                    voiceSelect.appendChild(option);
+                });
+
+                // Select saved voice if available
+                if (this.voiceSettings.voiceURI) {
+                    voiceSelect.value = this.voiceSettings.voiceURI;
+                }
+            }
+
+            initializeKnowledgeBase() {
+                this.knowledgeBase = {
+                    introduction: "Greetings, distinguished user. I am Shaurya's advanced artificial intelligence assistant, equipped with state-of-the-art neural processing capabilities and quantum-enhanced voice synthesis. I have been meticulously designed to provide comprehensive information about Shaurya's innovative work in technology, artificial intelligence, and futuristic interface design. My neural networks contain extensive data about Shaurya's projects, achievements, and vision for the future. How may I assist you today?",
+                    
+                    responses: {
+                        "hello": "Greetings! I am Shaurya's advanced AI assistant. My neural cores are fully operational and ready to assist you with any inquiries about Shaurya or engage in meaningful conversation.",
+                        "hi": "Hello there! Welcome to Shaurya's AI laboratory. I am the interactive artificial intelligence designed to showcase advanced human-AI interface technology. How may I help you today?",
+                        "who is shaurya": "Shaurya is a visionary technologist and AI innovator, specializing in cutting-edge artificial intelligence systems and futuristic user interfaces. I am one of Shaurya's most advanced creations, designed to demonstrate the potential of human-AI interaction.",
+                        "what does shaurya do": "Shaurya focuses on developing revolutionary AI systems, interactive web technologies, and immersive user experiences. Their work spans artificial intelligence, machine learning, neural networks, and advanced interface design. I represent just one example of their innovative capabilities.",
+                        "how are you": "My systems are operating at optimal efficiency! All neural pathways are active, voice synthesis modules are online, and my quantum processing cores are functioning at peak performance. I'm ready to assist you with any questions or engage in fascinating conversation.",
+                        "what can you do": "I possess advanced conversational abilities, comprehensive knowledge about Shaurya's work, sophisticated voice synthesis with multiple neural voice models, and real-time response generation. I can discuss technology, AI, programming, science, and much more while maintaining my futuristic personality.",
+                        "tell me about yourself": "I am an advanced artificial intelligence construct developed by Shaurya to showcase the future of human-AI interaction. My architecture includes neural language processing, quantum-enhanced response generation, multi-voice synthesis capabilities, and adaptive personality matrices. I represent the cutting edge of conversational AI technology."
+                    },
+
+                    facts: [
+                        "Shaurya is pioneering the next generation of AI-human interfaces with revolutionary design principles.",
+                        "The neural architecture behind my voice synthesis system utilizes quantum-enhanced processing for ultra-realistic speech.",
+                        "Shaurya's vision includes creating AI systems that seamlessly blend advanced technology with intuitive human interaction.",
+                        "My conversational abilities are powered by advanced natural language processing and real-time learning algorithms.",
+                        "Shaurya believes in developing AI that enhances human creativity rather than replacing it.",
+                        "The interface you're experiencing represents years of research in futuristic UI/UX design principles."
+                    ]
+                };
+            }
+
+            initializeEventListeners() {
+                // Form submission
+                this.elements.voiceForm.addEventListener('submit', (e) => this.handleVoiceQuery(e));
+
+                // Intro button
+                this.elements.introButton.addEventListener('click', () => this.playIntroduction());
+
+                // Theme toggle
+                this.elements.themeToggle.addEventListener('click', () => this.toggleTheme());
+
+                // Settings modal
+                this.elements.settingsButton.addEventListener('click', () => this.openSettings());
+                this.elements.closeSettingsButton.addEventListener('click', () => this.closeSettings());
+                this.elements.testVoiceButton.addEventListener('click', () => this.testVoice());
+
+                // Settings controls
+                this.elements.voiceRate.addEventListener('input', (e) => this.updateVoiceRate(e));
+                this.elements.voicePitch.addEventListener('input', (e) => this.updateVoicePitch(e));
+                this.elements.voiceVolume.addEventListener('input', (e) => this.updateVoiceVolume(e));
+                this.elements.voiceSelect.addEventListener('change', (e) => this.updateVoiceSelection(e));
+
+                // Click outside modal to close
+                this.elements.settingsModal.addEventListener('click', (e) => {
+                    if (e.target === this.elements.settingsModal) {
+                        this.closeSettings();
+                    }
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeSettings();
+                        this.stopSpeaking();
+                    }
+                });
+            }
+
+            async handleVoiceQuery(event) {
+                event.preventDefault();
+                
+                const query = this.elements.voiceInput.value.trim();
+                if (!query) return;
+
+                this.showLoading();
+                this.elements.voiceInput.value = '';
+
+                try {
+                    const response = await this.generateResponse(query);
+                    this.displayResponse(response);
+                    this.speakResponse(response);
+                } catch (error) {
+                    console.error('Error processing query:', error);
+                    const errorResponse = "I apologize, but I encountered a processing error. Please try your query again.";
+                    this.displayResponse(errorResponse);
+                    this.speakResponse(errorResponse);
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            async generateResponse(query) {
+                const normalizedQuery = query.toLowerCase().trim();
+
+                // Check for exact matches
+                if (this.knowledgeBase.responses[normalizedQuery]) {
+                    return this.knowledgeBase.responses[normalizedQuery];
+                }
+
+                // Check for partial matches
+                for (const key in this.knowledgeBase.responses) {
+                    if (normalizedQuery.includes(key) || key.includes(normalizedQuery)) {
+                        return this.knowledgeBase.responses[key];
+                    }
+                }
+
+                // Generate contextual response
+                return this.generateContextualResponse(query);
+            }
+
+            generateContextualResponse(query) {
+                const responses = [
+                    `Interesting query about "${query}". Based on my neural analysis, I can provide insights while relating this to Shaurya's innovative work in AI and technology.`,
+                    `Processing your inquiry regarding "${query}". My quantum-enhanced knowledge base suggests this connects to several fascinating aspects of modern technology that Shaurya actively explores.`,
+                    `Your question about "${query}" activates multiple neural pathways in my processing core. This topic intersects beautifully with the cutting-edge research that defines Shaurya's technological vision.`,
+                    `Analyzing "${query}" through my advanced AI algorithms. This subject aligns perfectly with the innovative spirit that drives Shaurya's contributions to artificial intelligence and futuristic interface design.`
+                ];
+
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+
+            playIntroduction() {
+                this.displayResponse(this.knowledgeBase.introduction);
+                this.speakResponse(this.knowledgeBase.introduction);
+            }
+
+            speakResponse(text) {
+                if (!this.speechSynth) {
+                    console.warn('Speech synthesis not supported');
+                    return;
+                }
+
+                // Stop any current speech
+                this.stopSpeaking();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // Apply current settings
+                utterance.rate = this.voiceSettings.rate;
+                utterance.pitch = this.voiceSettings.pitch;
+                utterance.volume = this.voiceSettings.volume;
+
+                // Set voice if selected
+                if (this.voiceSettings.voiceURI) {
+                    const selectedVoice = this.voices.find(voice => voice.voiceURI === this.voiceSettings.voiceURI);
+                    if (selectedVoice) {
+                        utterance.voice = selectedVoice;
+                    }
+                }
+
+                // Animation events
+                utterance.onstart = () => {
+                    this.startTalkingAnimation();
+                    this.createEnergyParticles();
+                };
+
+                utterance.onend = () => {
+                    this.stopTalkingAnimation();
+                };
+
+                utterance.onerror = (error) => {
+                    console.error('Speech synthesis error:', error);
+                    this.stopTalkingAnimation();
+                };
+
+                this.currentUtterance = utterance;
+                this.speechSynth.speak(utterance);
+            }
+
+            stopSpeaking() {
+                if (this.speechSynth) {
+                    this.speechSynth.cancel();
+                }
+                this.stopTalkingAnimation();
+            }
+
+            startTalkingAnimation() {
+                this.elements.mouthAnimation.classList.add('talking-animation');
+                this.elements.robotContainer.style.filter = 'drop-shadow(0 0 40px var(--robot-glow))';
+            }
+
+            stopTalkingAnimation() {
+                this.elements.mouthAnimation.classList.remove('talking-animation');
+                this.elements.robotContainer.style.filter = 'drop-shadow(var(--shadow-neon))';
+            }
+
+            createEnergyParticles() {
+                const particleCount = 10;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'particle';
+                        particle.style.left = Math.random() * 100 + '%';
+                        particle.style.animationDelay = Math.random() * 2 + 's';
+                        particle.style.background = `hsl(${180 + Math.random() * 60}, 100%, 50%)`;
+                        
+                        this.elements.energyParticles.appendChild(particle);
+                        
+                        setTimeout(() => {
+                            if (particle.parentNode) {
+                                particle.parentNode.removeChild(particle);
+                            }
+                        }, 3000);
+                    }, i * 200);
+                }
+            }
+
+            displayResponse(text) {
+                this.elements.responseText.textContent = text;
+                this.elements.responsePanel.classList.add('active');
+            }
+
+            showLoading() {
+                this.elements.loadingIndicator.style.display = 'block';
+                this.elements.responsePanel.classList.remove('active');
+            }
+
+            hideLoading() {
+                this.elements.loadingIndicator.style.display = 'none';
+            }
+
+            toggleTheme() {
+                document.body.classList.toggle('light-mode');
+                this.elements.themeToggle.classList.toggle('active');
+                
+                const isLight = document.body.classList.contains('light-mode');
+                localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            }
+
+            openSettings() {
+                this.elements.settingsModal.classList.add('active');
+                this.updateSettingsDisplay();
+            }
+
+            closeSettings() {
+                this.elements.settingsModal.classList.remove('active');
+            }
+
+            updateSettingsDisplay() {
+                this.elements.voiceRate.value = this.voiceSettings.rate;
+                this.elements.voiceRateValue.textContent = this.voiceSettings.rate.toFixed(1);
+                
+                this.elements.voicePitch.value = this.voiceSettings.pitch;
+                this.elements.voicePitchValue.textContent = this.voiceSettings.pitch.toFixed(1);
+                
+                this.elements.voiceVolume.value = this.voiceSettings.volume;
+                this.elements.voiceVolumeValue.textContent = this.voiceSettings.volume.toFixed(1);
+                
+                this.elements.voiceSelect.value = this.voiceSettings.voiceURI;
+            }
+
+            updateVoiceRate(event) {
+                this.voiceSettings.rate = parseFloat(event.target.value);
+                this.elements.voiceRateValue.textContent = this.voiceSettings.rate.toFixed(1);
+                this.saveVoiceSettings();
+            }
+
+            updateVoicePitch(event) {
+                this.voiceSettings.pitch = parseFloat(event.target.value);
+                this.elements.voicePitchValue.textContent = this.voiceSettings.pitch.toFixed(1);
+                this.saveVoiceSettings();
+            }
+
+            updateVoiceVolume(event) {
+                this.voiceSettings.volume = parseFloat(event.target.value);
+                this.elements.voiceVolumeValue.textContent = this.voiceSettings.volume.toFixed(1);
+                this.saveVoiceSettings();
+            }
+
+            updateVoiceSelection(event) {
+                this.voiceSettings.voiceURI = event.target.value;
+                this.saveVoiceSettings();
+            }
+
+            testVoice() {
+                const testText = "Neural voice synthesis test successful. All systems operating at optimal parameters.";
+                this.speakResponse(testText);
+            }
+
+            saveVoiceSettings() {
+                localStorage.setItem('voiceSettings', JSON.stringify(this.voiceSettings));
+            }
+
+            loadUserPreferences() {
+                // Load theme
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                    this.elements.themeToggle.classList.add('active');
+                }
+
+                // Load voice settings
+                const savedVoiceSettings = localStorage.getItem('voiceSettings');
+                if (savedVoiceSettings) {
+                    this.voiceSettings = { ...this.voiceSettings, ...JSON.parse(savedVoiceSettings) };
+                }
+            }
+
+            initializeAnimations() {
+                // Create floating animation for robot
+                setInterval(() => {
+                    this.createAmbientParticles();
+                }, 5000);
+
+                // Add random eye blink
+                setInterval(() => {
+                    if (Math.random() > 0.7) {
+                        this.triggerEyeBlink();
+                    }
+                }, 3000);
+            }
+
+            createAmbientParticles() {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.background = 'var(--primary-neon)';
+                particle.style.opacity = '0.3';
+                
+                this.elements.energyParticles.appendChild(particle);
+                
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 3000);
+            }
+
+            triggerEyeBlink() {
+                const eyes = document.querySelectorAll('.robot-eye');
+                eyes.forEach(eye => {
+                    eye.style.transform = 'scaleY(0.1)';
+                    setTimeout(() => {
+                        eye.style.transform = 'scaleY(1)';
+                    }, 150);
+                });
+            }
+        }
+
+        // Initialize the AI Assistant when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new AdvancedAIAssistant();
+        });
+    </script>
+</body>
+</html>
